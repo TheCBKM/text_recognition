@@ -39,13 +39,41 @@ class _MyHomePageState extends State<MyHomePage> {
 
   String mytext = "Text will be displayed here ";
 
-  Future pickImage() async {
-    var tmpStore = await ImagePicker.pickImage(source: ImageSource.gallery);
+  Future pickImage(BuildContext context) async {
+    await showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            padding: EdgeInsets.all(50.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                FlatButton(
+                  child: Icon(Icons.camera,color: Colors.red,),
+                  onPressed: () {
+                    getImage(ImageSource.camera);
+                  },
+                ),
+                FlatButton(
+                  child: Icon(Icons.attach_file,color: Colors.red,),
+                  onPressed: () {
+                    getImage(ImageSource.gallery);
+                  },
+                )
+              ],
+            ),
+          );
+        });
+  }
+
+  Future getImage(ImageSource source) async {
+    var tmpStore = await ImagePicker.pickImage(source: source);
     if (tmpStore != null)
       setState(() {
         pickedImage = tmpStore;
         isImageLoaded = true;
       });
+    Navigator.pop(context);
   }
 
   Future readText() async {
@@ -159,7 +187,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
               color: Colors.blue,
-              onPressed: pickImage,
+              onPressed: () {
+                pickImage(context);
+              },
             ),
             SizedBox(
               height: 10.0,
